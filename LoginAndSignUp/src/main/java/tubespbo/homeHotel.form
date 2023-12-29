@@ -91,7 +91,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jLabel3" min="-2" pref="84" max="-2" attributes="0"/>
+                  <Component id="jLabel3" min="-2" pref="111" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
                   <Component id="jButton1" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -133,7 +133,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel3">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Hotel Walawe"/>
+            <Property name="text" type="java.lang.String" value="Hotel Transylvania"/>
           </Properties>
         </Component>
       </SubComponents>
@@ -147,6 +147,7 @@
       <SubComponents>
         <Component class="javax.swing.JTextArea" name="jTextArea1">
           <Properties>
+            <Property name="editable" type="boolean" value="false"/>
             <Property name="columns" type="int" value="20"/>
             <Property name="rows" type="int" value="5"/>
             <Property name="text" type="java.lang.String" value="&quot;Selamat datang di Hotel Walawe &#x2013; &#xa;Pengalaman Menginap Tak Terlupakan! Temukan kamar-kamar eksklusif dengan layanan dan &#xa;fasilitas premium. Sertai kami dan nikmati kenyamanan serta kemewahan dalam setiap &#xa;detik menginap Anda.&quot;"/>
@@ -156,6 +157,7 @@
     </Container>
     <Component class="javax.swing.JTextField" name="jTextField1">
       <Properties>
+        <Property name="editable" type="boolean" value="false"/>
         <Property name="text" type="java.lang.String" value="0882-3535-9999"/>
       </Properties>
       <Events>

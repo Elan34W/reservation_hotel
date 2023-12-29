@@ -48,7 +48,7 @@ public class kamarTersedia extends javax.swing.JFrame {
 
         jPanel1.setPreferredSize(new java.awt.Dimension(800, 34));
 
-        jLabel1.setText("Hotel Walawe");
+        jLabel1.setText("Hotel Transylvania");
 
         jButton1.setText("Logout");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -77,7 +77,7 @@ public class kamarTersedia extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -105,6 +105,7 @@ public class kamarTersedia extends javax.swing.JFrame {
                 "Nomor Kamar", "Jenis Kamar", "Harga", "Ketersediaan"
             }
         ));
+        jTable2.getTableHeader().setReorderingAllowed(false);
         jScrollPane2.setViewportView(jTable2);
 
         jButton4.setText("Pesan");
@@ -161,11 +162,17 @@ public class kamarTersedia extends javax.swing.JFrame {
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-            bookingKamar bookingKamarFrame = new bookingKamar();
-            bookingKamarFrame.setVisible(true);
-            bookingKamarFrame.pack();
-            bookingKamarFrame.setLocationRelativeTo(null); 
-            this.dispose();
+            int selectedRow = jTable2.getSelectedRow();
+            if (selectedRow != -1) {
+                int nomerKamar = (int) jTable2.getValueAt(selectedRow, 0);
+                String jenisKamar = jTable2.getValueAt(selectedRow, 1).toString();
+                int harga = (int) jTable2.getValueAt(selectedRow, 2);
+                String ketersediaan = jTable2.getValueAt(selectedRow, 3).toString();
+
+                openReservePage(nomerKamar, jenisKamar, harga, ketersediaan);
+            } else {
+                JOptionPane.showMessageDialog(null, "Silahlan Pilih Kamar Dahulu.");
+            }
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -186,7 +193,7 @@ public class kamarTersedia extends javax.swing.JFrame {
         DefaultTableModel model = (DefaultTableModel)jTable2.getModel();
         try {
             while (rs.next()) {
-                model.addRow(new Object[]{rs.getString(1),rs.getString(2),rs.getString(3),rs.getString(4),});
+                model.addRow(new Object[]{rs.getInt(1),rs.getString(2),rs.getInt(3),rs.getString(4),});
             }
             rs.close();
         } catch (Exception e) {
@@ -232,6 +239,13 @@ public class kamarTersedia extends javax.swing.JFrame {
             }
         });
     }
+    
+private void openReservePage(int nomerKamar, String jenisKamar, int harga, String ketersediaan) {
+    bookingKamar reservePage = new bookingKamar(nomerKamar, jenisKamar, harga, ketersediaan);
+    this.setVisible(false);
+    reservePage.setVisible(true);
+    reservePage.setLocationRelativeTo(null); 
+}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;

@@ -7,6 +7,7 @@ package tubespbo;
 import javax.swing.JOptionPane;
 import java.sql.*;
 import project.Select;
+import project.UserSession;
 /**
  *
  * @author Gabriel azarya
@@ -242,6 +243,9 @@ public class Login extends javax.swing.JFrame {
                 try {
                     if (rs.next()) {
                         check = 1;
+                        int customerId = rs.getInt("id_akun");
+                        UserSession.login(customerId);
+                        
                         if (rs.getString(5).equals("true")) {
                             setVisible(false);
                             homeHotel homeHotelFrame = new homeHotel();                            
