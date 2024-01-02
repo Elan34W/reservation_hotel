@@ -8,18 +8,19 @@ import java.sql.ResultSet;
 import javax.swing.JOptionPane;
 import project.Select;
 import java.sql.*;
+import project.InsertUpdate;
 import project.UserSession;
 
 /**
  *
  * @author Gabriel azarya
  */
-public class ForgotPassword extends javax.swing.JFrame {
+public class ResetPassword extends javax.swing.JFrame {
 
     /**
      * Creates new form ForgotPassword
      */
-    public ForgotPassword() {
+    public ResetPassword() {
         initComponents();
     }
 
@@ -37,11 +38,13 @@ public class ForgotPassword extends javax.swing.JFrame {
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        confirmNewPassword = new javax.swing.JPasswordField();
+        newPassword = new javax.swing.JPasswordField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -90,31 +93,22 @@ public class ForgotPassword extends javax.swing.JFrame {
         jPanel3.add(jLabel1);
         jLabel1.setBounds(440, 100, 320, 43);
 
-        jTextField1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
-            }
-        });
-        jPanel3.add(jTextField1);
-        jTextField1.setBounds(440, 240, 320, 40);
-
         jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel3.setText("Email");
+        jLabel3.setText("New Password");
         jPanel3.add(jLabel3);
-        jLabel3.setBounds(440, 210, 92, 20);
+        jLabel3.setBounds(440, 170, 130, 20);
 
         jButton1.setBackground(new java.awt.Color(255, 102, 102));
         jButton1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jButton1.setText("Lakukan Reset");
+        jButton1.setText("Submit");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
         jPanel3.add(jButton1);
-        jButton1.setBounds(440, 300, 140, 40);
+        jButton1.setBounds(440, 330, 140, 40);
 
         jButton2.setBackground(new java.awt.Color(255, 102, 102));
         jButton2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -132,6 +126,19 @@ public class ForgotPassword extends javax.swing.JFrame {
         jLabel5.setText("Already has an account ?");
         jPanel3.add(jLabel5);
         jLabel5.setBounds(520, 400, 180, 20);
+
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel4.setText("Confirm New Password");
+        jPanel3.add(jLabel4);
+        jLabel4.setBounds(440, 250, 170, 20);
+
+        confirmNewPassword.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jPanel3.add(confirmNewPassword);
+        confirmNewPassword.setBounds(440, 280, 320, 40);
+
+        newPassword.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jPanel3.add(newPassword);
+        newPassword.setBounds(440, 200, 320, 40);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -152,33 +159,25 @@ public class ForgotPassword extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-        int check = 0;
-        String email = jTextField1.getText();
-        ResultSet rs = Select.getData("select * from customer where email = '"+email+"'");    
-        try {
-            if (rs.next()) {
-                check = 1;
-                int customerId = rs.getInt("id_akun");
-                UserSession.login(customerId);
-                setVisible(false);
-                ResetPassword ResetPasswordFrame = new ResetPassword();                            
-                ResetPasswordFrame.setVisible(true);
-                ResetPasswordFrame.pack();                              
-                ResetPasswordFrame.setLocationRelativeTo(null);
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, e);
+        // TODO add your handling code here:  
+        String newPassowrd = newPassword.getText();
+        String confirmPassword = confirmNewPassword.getText();
+        
+        if (newPassowrd.equals("") || confirmPassword.equals("")) {
+            JOptionPane.showMessageDialog(null, "Semua Harus Di isi");
+        } 
+        else if (confirmPassword.equals(newPassowrd)) {
+            String Query;
+            int customerId = UserSession.getCurrentUserId();
+            Query = "update customer set password = '"+confirmPassword+"' where id_akun = '"+customerId+"'";
+            InsertUpdate.setData(Query, "Password Telah di Ubah");
+            setVisible(false);
+            Login LoginFrame = new Login();
+            LoginFrame.setVisible(true);
+            LoginFrame.pack();
+            LoginFrame.setLocationRelativeTo(null);  
         }
-          if (check == 0) {
-            JOptionPane.showMessageDialog(null, "Email atau Password salah");
-        }          
     }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
-        // TODO add your handling code here:
-
-    }//GEN-LAST:event_jTextField1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         Login LoginFrame = new Login();
@@ -205,34 +204,37 @@ public class ForgotPassword extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ForgotPassword.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ResetPassword.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ForgotPassword.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ResetPassword.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ForgotPassword.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ResetPassword.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ForgotPassword.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ResetPassword.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ForgotPassword().setVisible(true);
+                new ResetPassword().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPasswordField confirmNewPassword;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JPasswordField newPassword;
     // End of variables declaration//GEN-END:variables
 }

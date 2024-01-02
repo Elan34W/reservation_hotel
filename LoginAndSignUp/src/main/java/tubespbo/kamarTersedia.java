@@ -6,6 +6,8 @@ package tubespbo;
 
 import javax.swing.JOptionPane;
 import java.sql.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import project.*;
 /**
@@ -168,8 +170,12 @@ public class kamarTersedia extends javax.swing.JFrame {
                 String jenisKamar = jTable2.getValueAt(selectedRow, 1).toString();
                 int harga = (int) jTable2.getValueAt(selectedRow, 2);
                 String ketersediaan = jTable2.getValueAt(selectedRow, 3).toString();
-
-                openReservePage(nomerKamar, jenisKamar, harga, ketersediaan);
+                if (ketersediaan.equals("Terisi")) {
+                    JOptionPane.showMessageDialog(null, "Kamar Telah di Pesan");
+                }
+                else {
+                    openReservePage(nomerKamar, jenisKamar, harga, ketersediaan);                    
+                }
             } else {
                 JOptionPane.showMessageDialog(null, "Silahlan Pilih Kamar Dahulu.");
             }
@@ -199,6 +205,7 @@ public class kamarTersedia extends javax.swing.JFrame {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e);
         }
+
         jTable2.setDefaultEditor(Object.class, null);
     }//GEN-LAST:event_formComponentShown
 

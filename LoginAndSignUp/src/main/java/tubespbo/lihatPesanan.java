@@ -5,6 +5,9 @@
 package tubespbo;
 
 import javax.swing.JOptionPane;
+import java.sql.*;
+import javax.swing.table.DefaultTableModel;
+import project.*;
 
 /**
  *
@@ -34,8 +37,14 @@ public class lihatPesanan extends javax.swing.JFrame {
         jButton2 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        jButton4 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                formComponentShown(evt);
+            }
+        });
 
         jLabel1.setText("Hotel Transylvania");
 
@@ -57,8 +66,9 @@ public class lihatPesanan extends javax.swing.JFrame {
             new Object [][] {
             },
             new String [] {
-                "no", "Nomer Kamar", "Jenis Kamar", "Check In", "Check Out", "Harga"
+                "no", "Nomer Kamar", "Check In", "Check Out", "Harga"
             }
+
         ));
         jTable1.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(jTable1);
@@ -90,17 +100,30 @@ public class lihatPesanan extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        jButton4.setText("Batalkan");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(346, 346, 346)
+                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 61, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 18, Short.MAX_VALUE))
         );
 
         pack();
@@ -126,6 +149,41 @@ public class lihatPesanan extends javax.swing.JFrame {
             LoginFrame.setLocationRelativeTo(null); 
         }
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+        // TODO add your handling code here:
+        int customerId = UserSession.getCurrentUserId();
+        ResultSet rs = Select.getData("select * from pemesanan where id_kustomer = '"+customerId+"' AND status NOT IN ('cancel','completed')");
+        DefaultTableModel model = (DefaultTableModel)jTable1.getModel();
+        model.setRowCount(0);
+        try {
+            int rowNum = 1;
+            while (rs.next()) {
+                model.addRow(new Object[]{rowNum++, rs.getInt(2),rs.getDate(3),rs.getDate(4),rs.getInt(6),});
+            }
+            rs.close();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+        jTable1.setDefaultEditor(Object.class, null); 
+    }//GEN-LAST:event_formComponentShown
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+            int a = JOptionPane.showConfirmDialog(null, "Apakah anda ingin membatalkan pesanan ? ","Select",JOptionPane.YES_NO_OPTION);
+            int selectedRow = jTable1.getSelectedRow();
+            if (a == 0) {
+                if (selectedRow != -1) {
+                    int nomerKamar = (int)(jTable1.getValueAt(selectedRow, 1));
+                    String Query;
+                    Query = "update pemesanan set status = 'cancel' where no_kamar = '"+nomerKamar+"'";
+                    InsertUpdate.setData(Query, "Pemesanan Telah Di Batalakan");
+
+                } else {
+                    JOptionPane.showMessageDialog(null, "Silahlan Pilih Kamar Dahulu.");
+                }              
+        }    
+    }//GEN-LAST:event_jButton4ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -166,6 +224,7 @@ public class lihatPesanan extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
