@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 29, 2023 at 03:14 PM
+-- Generation Time: Jan 02, 2024 at 04:13 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -20,6 +20,18 @@ SET time_zone = "+00:00";
 --
 -- Database: `tubes_pbo`
 --
+
+DELIMITER $$
+--
+-- Procedures
+--
+CREATE DEFINER=`root`@`localhost` PROCEDURE `update_completed_status_procedure` ()   BEGIN
+  UPDATE pemesanan
+  SET status = 'completed'
+  WHERE tanggal_checkOut <= CURRENT_DATE;
+END$$
+
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -46,7 +58,9 @@ INSERT INTO `customer` (`id_akun`, `nama`, `email`, `password`, `status`) VALUES
 (4, 'sdfsdf', 'adasda', 'trhdghf', 'false'),
 (5, 'adasd', 'adasda', 'adsasd', 'true'),
 (6, '1', '1', '1', 'true'),
-(7, '2', '2', '2', 'false');
+(7, '2', '2', '2', 'true'),
+(8, 'adasdasd', '3', '3', 'true'),
+(9, '4', '4', '5', 'false');
 
 -- --------------------------------------------------------
 
@@ -67,7 +81,7 @@ CREATE TABLE `kamar` (
 --
 
 INSERT INTO `kamar` (`nomer_kamar`, `jenis_kamar`, `harga`, `ketersediaan`, `id_kamar`) VALUES
-(101, 'Single', 100000, 'tersedia', 1),
+(101, 'Single', 100000, 'Terisi', 1),
 (102, 'Single', 100000, 'tersedia', 2),
 (103, 'Single', 100000, 'tersedia', 3),
 (104, 'Single', 100000, 'tersedia', 4),
@@ -95,17 +109,47 @@ CREATE TABLE `pemesanan` (
   `tanggal_checkIn` date DEFAULT NULL,
   `tanggal_checkOut` date DEFAULT NULL,
   `id_kustomer` int(11) DEFAULT NULL,
-  `total_bayar` int(11) DEFAULT NULL
+  `total_bayar` int(11) DEFAULT NULL,
+  `status` varchar(255) DEFAULT 'on going'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `pemesanan`
 --
 
-INSERT INTO `pemesanan` (`id_pemesanan`, `no_kamar`, `tanggal_checkIn`, `tanggal_checkOut`, `id_kustomer`, `total_bayar`) VALUES
-(5, 101, '2023-12-29', '2023-12-31', 6, 200000),
-(6, 305, '2023-12-29', '2024-01-01', 6, 1200000),
-(7, 103, '2023-01-01', '2023-12-31', 6, 36400000);
+INSERT INTO `pemesanan` (`id_pemesanan`, `no_kamar`, `tanggal_checkIn`, `tanggal_checkOut`, `id_kustomer`, `total_bayar`, `status`) VALUES
+(1, 101, '2024-01-02', '2024-01-04', 6, 200000, 'cancel'),
+(2, 101, '2024-01-01', '2024-01-02', 6, 100000, 'completed'),
+(3, 102, '2024-01-01', '2024-01-01', 6, 0, 'completed'),
+(4, 101, '2024-01-01', '2024-01-02', 6, 0, 'completed'),
+(5, 101, '2023-12-31', '2024-01-02', 6, 200000, 'completed'),
+(7, 101, '2023-12-31', '2024-01-02', 6, 200000, 'completed'),
+(8, 101, '2024-01-01', '2024-01-03', 6, 200000, 'on going'),
+(9, 104, '2024-01-02', '2024-01-08', 7, 600000, 'cancel');
+
+--
+-- Triggers `pemesanan`
+--
+DELIMITER $$
+CREATE TRIGGER `set_kamar_terisi` AFTER INSERT ON `pemesanan` FOR EACH ROW BEGIN
+    IF NEW.status = 'on going' THEN
+    UPDATE kamar
+    SET ketersediaan = 'Terisi'
+    WHERE nomer_kamar = NEW.no_kamar;
+    END IF;
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `update_kamar_status_trigger` AFTER UPDATE ON `pemesanan` FOR EACH ROW BEGIN
+    IF NEW.status = 'cancel' OR NEW.status = 'completed' THEN
+        UPDATE kamar
+        SET ketersediaan = 'tersedia'
+        WHERE nomer_kamar = NEW.no_kamar;
+    END IF;
+END
+$$
+DELIMITER ;
 
 --
 -- Indexes for dumped tables
@@ -139,7 +183,7 @@ ALTER TABLE `pemesanan`
 -- AUTO_INCREMENT for table `customer`
 --
 ALTER TABLE `customer`
-  MODIFY `id_akun` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id_akun` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `kamar`
@@ -151,7 +195,7 @@ ALTER TABLE `kamar`
 -- AUTO_INCREMENT for table `pemesanan`
 --
 ALTER TABLE `pemesanan`
-  MODIFY `id_pemesanan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id_pemesanan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- Constraints for dumped tables
@@ -163,6 +207,18 @@ ALTER TABLE `pemesanan`
 ALTER TABLE `pemesanan`
   ADD CONSTRAINT `pemesanan_ibfk_1` FOREIGN KEY (`no_kamar`) REFERENCES `kamar` (`nomer_kamar`),
   ADD CONSTRAINT `pemesanan_ibfk_2` FOREIGN KEY (`id_kustomer`) REFERENCES `customer` (`id_akun`);
+
+DELIMITER $$
+--
+-- Events
+--
+CREATE DEFINER=`root`@`localhost` EVENT `update_status_event` ON SCHEDULE EVERY 1 DAY STARTS '2024-01-02 09:00:00' ON COMPLETION NOT PRESERVE ENABLE DO BEGIN
+  UPDATE pemesanan
+  SET status = 'completed'
+  WHERE tanggal_check_out <= CURRENT_DATE;
+END$$
+
+DELIMITER ;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
