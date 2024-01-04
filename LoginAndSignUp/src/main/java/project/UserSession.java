@@ -9,14 +9,10 @@ package project;
  * @author Elan
  */
 public class UserSession {
-    private static int currentUserId = -1;  // Initialize to a value that indicates no user is logged in
+    private static int currentUserId = -1;
 
     public static void login(int userId) {
         currentUserId = userId;
-    }
-
-    public static void logout() {
-        currentUserId = -1;
     }
 
     public static int getCurrentUserId() {

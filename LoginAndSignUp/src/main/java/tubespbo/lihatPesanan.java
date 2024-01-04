@@ -165,7 +165,10 @@ public class lihatPesanan extends javax.swing.JFrame {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e);
         }
-        jTable1.setDefaultEditor(Object.class, null); 
+        jTable1.setDefaultEditor(Object.class, null);
+        for (int i = 0; i < jTable1.getColumnModel().getColumnCount(); i++) {
+            jTable1.getColumnModel().getColumn(i).setResizable(false);
+        }        
     }//GEN-LAST:event_formComponentShown
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed

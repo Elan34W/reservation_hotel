@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 02, 2024 at 04:13 PM
+-- Generation Time: Jan 04, 2024 at 07:00 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -28,7 +28,7 @@ DELIMITER $$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `update_completed_status_procedure` ()   BEGIN
   UPDATE pemesanan
   SET status = 'completed'
-  WHERE tanggal_checkOut <= CURRENT_DATE;
+  WHERE tanggal_check_out <= CURRENT_DATE;
 END$$
 
 DELIMITER ;
@@ -82,7 +82,7 @@ CREATE TABLE `kamar` (
 
 INSERT INTO `kamar` (`nomer_kamar`, `jenis_kamar`, `harga`, `ketersediaan`, `id_kamar`) VALUES
 (101, 'Single', 100000, 'Terisi', 1),
-(102, 'Single', 100000, 'tersedia', 2),
+(102, 'Single', 100000, 'Terisi', 2),
 (103, 'Single', 100000, 'tersedia', 3),
 (104, 'Single', 100000, 'tersedia', 4),
 (105, 'Single', 100000, 'tersedia', 5),
@@ -119,13 +119,15 @@ CREATE TABLE `pemesanan` (
 
 INSERT INTO `pemesanan` (`id_pemesanan`, `no_kamar`, `tanggal_checkIn`, `tanggal_checkOut`, `id_kustomer`, `total_bayar`, `status`) VALUES
 (1, 101, '2024-01-02', '2024-01-04', 6, 200000, 'cancel'),
-(2, 101, '2024-01-01', '2024-01-02', 6, 100000, 'completed'),
+(2, 101, '2024-01-01', '2024-01-02', 6, 100000, 'cancel'),
 (3, 102, '2024-01-01', '2024-01-01', 6, 0, 'completed'),
-(4, 101, '2024-01-01', '2024-01-02', 6, 0, 'completed'),
-(5, 101, '2023-12-31', '2024-01-02', 6, 200000, 'completed'),
-(7, 101, '2023-12-31', '2024-01-02', 6, 200000, 'completed'),
-(8, 101, '2024-01-01', '2024-01-03', 6, 200000, 'on going'),
-(9, 104, '2024-01-02', '2024-01-08', 7, 600000, 'cancel');
+(4, 101, '2024-01-01', '2024-01-02', 6, 0, 'cancel'),
+(5, 101, '2023-12-31', '2024-01-02', 6, 200000, 'cancel'),
+(7, 101, '2023-12-31', '2024-01-02', 6, 200000, 'cancel'),
+(8, 101, '2024-01-01', '2024-01-03', 6, 200000, 'cancel'),
+(9, 104, '2024-01-02', '2024-01-08', 7, 600000, 'cancel'),
+(10, 101, '2024-01-05', '2024-01-06', 6, 100000, 'on going'),
+(11, 102, '2024-01-05', '2024-01-07', 7, 200000, 'on going');
 
 --
 -- Triggers `pemesanan`
@@ -195,7 +197,7 @@ ALTER TABLE `kamar`
 -- AUTO_INCREMENT for table `pemesanan`
 --
 ALTER TABLE `pemesanan`
-  MODIFY `id_pemesanan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id_pemesanan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- Constraints for dumped tables
@@ -212,7 +214,7 @@ DELIMITER $$
 --
 -- Events
 --
-CREATE DEFINER=`root`@`localhost` EVENT `update_status_event` ON SCHEDULE EVERY 1 DAY STARTS '2024-01-02 09:00:00' ON COMPLETION NOT PRESERVE ENABLE DO BEGIN
+CREATE DEFINER=`root`@`localhost` EVENT `update_status_event` ON SCHEDULE EVERY 1 DAY STARTS '2024-01-05 09:00:00' ON COMPLETION NOT PRESERVE ENABLE DO BEGIN
   UPDATE pemesanan
   SET status = 'completed'
   WHERE tanggal_check_out <= CURRENT_DATE;
